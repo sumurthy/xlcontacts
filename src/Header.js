@@ -81,7 +81,7 @@ export class Header extends Component {
   									<Secure {...props} signinStatus={signinStatus} stateChange={this.props.stateChange} />
 					)}/>
 				    <Route path="/auth" render={(props) => (
-                        <Auth {...props} />) }
+                        <Auth {...props} stateChange={this.props.stateChange} />) }
                 	/>
 
 				</div>

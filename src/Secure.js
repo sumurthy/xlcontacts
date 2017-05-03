@@ -19,7 +19,7 @@ export class Secure extends Component {
 	}
 
 	signIn() {
-	    window.location.replace('https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=9b700ac9-4f07-4269-844f-afebf55c2dc2&response_type=token&redirect_uri=http://localhost:3000/auth/&scope=files.readwrite+offline_access&response_mode=fragment&state=12345&nonce=678910')
+	    window.location.replace('https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=9b700ac9-4f07-4269-844f-afebf55c2dc2&response_type=token&redirect_uri=http://localhost:3000/auth/&scope=contacts.readwrite+files.readwrite+offline_access&response_mode=fragment&state=12345&nonce=678910')
 	}
 
 	signOut(cb) {
