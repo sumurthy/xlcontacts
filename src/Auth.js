@@ -1,20 +1,12 @@
 import React from 'react'
-//import * as hello from 'hellojs'
 let hello = require('hellojs/dist/hello.all.js')
+//import * as Hello from 'hellojs'
 
-import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  Redirect,
-  withRouter
-} from 'react-router-dom'
 
 import ErrorPage from './ErrorPage'
-import Processing from './Processing'
-import MyContacts from './MyContacts'
 
 class Auth extends React.Component {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -32,16 +24,34 @@ class Auth extends React.Component {
     }
 
     login() {
+        
         hello('msft').login({
             scope: 'contacts.readwrite,files.readwrite,offline_access'
         })
     }
 
     async componentDidMount() {
+
+        hello.init({
+            msft: {
+                oauth: {
+                    version: 2,
+                    auth: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize'
+                },
+                scope_delim: ' ',
+                form: false
+            }
+        })      
+
+        hello.init({
+            msft: '9b700ac9-4f07-4269-844f-afebf55c2dc2'
+        }, {
+            redirect_uri: window.location.href
+        })
+
         hello.on('auth.login', (auth) => {
-            console.log("Auth compnent Hello on" + JSON.stringify(auth))
             let accessToken;
-            if (auth.network == "msft") {
+            if (auth.network === "msft") {
                 let authResponse = hello('msft').getAuthResponse();
                 accessToken = authResponse.access_token;
                 localStorage.setItem('authCode', accessToken);
