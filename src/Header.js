@@ -12,7 +12,7 @@ import React, { Component } from 'react';
 import MyContacts from './MyContacts'
 import ExcelContacts from './ExcelContacts'
 import SyncContacts from './SyncContacts'
-import Secure from './Secure'
+//import Secure from './Secure'
 import Auth from './Auth'
 import Home from './Home'
 
@@ -31,7 +31,7 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
 	      <Component {...props}/>
 	    ) : (
 	      <Redirect to={{
-	        pathname: '/secure',
+	        pathname: '/auth',
 	        state: { from: props.location }
 	      }}/>
 	    )
@@ -69,7 +69,7 @@ export class Header extends Component {
 						<ul className="nav navbar-nav">
 							<li className=""><Link to="/mycontacts">My Contacts</Link></li>
 							<li><Link to="/excelcontacts">Export to Excel</Link></li>
-							<li><Link to="/secure">{signinStatus ? `Logout`:`Login` } </Link></li>
+							<li><Link to="/auth">{signinStatus ? `Logout`:`Login` } </Link></li>
 						</ul>
 					</div>
 				</nav>
@@ -77,9 +77,6 @@ export class Header extends Component {
 					<Route path="/" exact component={Home}/>
 					<ProtectedRoute  path="/mycontacts" component={MyContacts}/>
 					<ProtectedRoute  path="/excelcontacts" component={ExcelContacts}/>
-					<Route path='/secure' render={(props) => (
-  									<Secure {...props} signinStatus={signinStatus} stateChange={this.props.stateChange} />
-					)}/>
 				    <Route path="/auth" render={(props) => (
                         <Auth {...props} stateChange={this.props.stateChange} />) }
                 	/>

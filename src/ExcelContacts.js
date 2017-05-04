@@ -12,7 +12,8 @@ export class ExcelContacts extends Component {
 	}
 
 
-	export() {
+	async export() {
+
 		let authCode = localStorage.getItem('authCode')
 		let contacts = localStorage.getItem('contacts')
         let params = this.checkFileExists(authCode)
@@ -35,13 +36,7 @@ export class ExcelContacts extends Component {
 	render() {
 		return (
 			<div >
-				<form>
-				  <div className="form-group">
-				    <label for="sheetname">Sheet name</label>
-				    <input placeholder="(optional)" type="sheetname" className="form-control" id="sheetname"/>
-				  </div>
-				  <button type="submit" className="btn btn-default">Go</button>
-				</form>
+				<p> Excel contacts</p>
 			</div>
 		);
 	}

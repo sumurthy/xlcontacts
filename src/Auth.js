@@ -1,4 +1,6 @@
 import React from 'react'
+//import * as hello from 'hellojs'
+let hello = require('hellojs/dist/hello.all.js')
 
 import {
   BrowserRouter as Router,
@@ -19,73 +21,57 @@ class Auth extends React.Component {
             isSignedIn: false,
             done: false
             }
+        this.signOut = this.signOut.bind(this)
+        this.login = this.login.bind(this)
     }
 
+    signOut(cb) {
+        localStorage.setItem('signIn', "FALSE");
+        this.props.stateChange()
+        this.props.history.push('/')
+    }
+
+    login() {
+        hello('msft').login({
+            scope: 'contacts.readwrite,files.readwrite,offline_access'
+        })
+    }
 
     async componentDidMount() {
-        localStorage.setItem('signIn', "FALSE");
-        localStorage.setItem('authCode', "");
-        let params = this._extractParams(this.props.location.hash)
-        if (params['access_token']) {
-            let response = await this._getDrive(params['access_token'])
-            if (response.ok) {
-                let body = await response.json()
-                localStorage.setItem('authCode', params['access_token']);
+        hello.on('auth.login', (auth) => {
+            console.log("Auth compnent Hello on" + JSON.stringify(auth))
+            let accessToken;
+            if (auth.network == "msft") {
+                let authResponse = hello('msft').getAuthResponse();
+                accessToken = authResponse.access_token;
+                localStorage.setItem('authCode', accessToken);
                 localStorage.setItem('signIn', "TRUE");
                 this.props.stateChange()
-                console.log('Saved Auth Code: ' + localStorage.getItem('authCode'))
-                this.setState({done: true})
+                //this.setState({done: true})
             }
             else {
                 localStorage.setItem('signIn', "FALSE");
                 localStorage.setItem('authCode', "");
             }
-        }
+        })
     }
 
     render () {
-        if (!this.state.done) { 
-            return <Processing msg="Getting authorization token."/>
-        } 
-        else { 
-            return <MyContacts/>
+        if (localStorage.getItem('signIn') === "TRUE") {
+            return <div> <p className="lead"> Logout of your session: </p>      
+                        <button className="btn btn-default" onClick={this.signOut}
+                        >Logout </button>
+                    </div>
+        }
+        else {
+            return <div><div className="control-group">
+                            <p className="lead"> Login to continue: </p>    
+                            <button className="btn btn-default" onClick={this.login}>Login</button>
+                         </div>
+                    </div> 
         }
     }
 
-
-/* 
-    This method parses out the auth code if one exists. \
-*/
-
-    _extractParams = (segment = '') => {
-        let parts = segment.split('#');
-        if (parts.length <= 0) return {};
-        segment = parts[1]
-        let params = {}
-        let regex = /([^&=]+)=([^&]*)/g
-        let matches = ''
-
-        while ((matches = regex.exec(segment)) !== null) {
-            params[decodeURIComponent(matches[1])] = decodeURIComponent(matches[2])
-        }
-
-        return params
-    }
-
-    async _getDrive(at="") {
-        let headers = new Headers()
-        headers.append('Accept', 'application/json')
-        headers.append('Authorization', at)
-        let response = null
-        try {
-            return await fetch('https://graph.microsoft.com/v1.0/me/drive', {
-                headers: headers
-            })
-        } catch (e) {
-            console.log("Error----------------------------------------------------");
-        } finally {
-        }
-    }
 }
 
 
