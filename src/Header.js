@@ -2,8 +2,7 @@ import {
   BrowserRouter as Router,
   Route,
   Link,
-  Redirect,
-  withRouter
+  Redirect 
 } from 'react-router-dom'
 
 
@@ -11,7 +10,6 @@ import React, { Component } from 'react';
 
 import MyContacts from './MyContacts'
 import ExcelContacts from './ExcelContacts'
-import SyncContacts from './SyncContacts'
 //import Secure from './Secure'
 import Auth from './Auth'
 import Home from './Home'
@@ -20,7 +18,7 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
 
 	let signinStatus = false
 
-  	if (localStorage.getItem('signIn') === "TRUE") {
+  	if (sessionStorage.getItem('signIn') === "TRUE") {
        	signinStatus = true
     }	
 
@@ -41,9 +39,6 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
 
 export class Header extends Component {
 
-	constructor(props) {
-	    super(props)
-	}
 
 	render() {
 		const divStyle = {
@@ -52,11 +47,11 @@ export class Header extends Component {
 		}
 
 		let signinStatus = false;
-	  	if (localStorage.getItem('signIn') === "TRUE") {
+	  	if (sessionStorage.getItem('signIn') === "TRUE") {
 	       	signinStatus = true
 	    }
 
-	    console.log('---------> ' + localStorage.getItem('signIn') + signinStatus)	
+	    console.log('---------> ' + sessionStorage.getItem('signIn') + signinStatus)	
 
 		return (
 			<Router> 
@@ -80,6 +75,9 @@ export class Header extends Component {
 				    <Route path="/auth" render={(props) => (
                         <Auth {...props} stateChange={this.props.stateChange} />) }
                 	/>
+                	<Route path="/Error"  render={(props) => (
+                        <Error {...props}/>) }
+                    />
 
 				</div>
 			</div>	

@@ -1,48 +1,60 @@
 import React, { Component } from 'react';
 import Processing from './Processing'
+import ErrorPage from './ErrorPage'
+import hello from 'hellojs/dist/hello.all.js'
+import {Config} from './config'
+
 
 export class MyContacts extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            done: false,
-            contacts: []
+            status: "processing",
+            contacts: [],
+            msg: ''
             }
     }
 
 	async componentDidMount() {
-	    console.log("Auth code used in the My contacts: " + localStorage.getItem('authCode'))
-	    let response = await this.getContacts(localStorage.getItem('authCode'))
+
+        let authResponse = hello('msft').getAuthResponse();
+	    let response = await this.getContacts(authResponse.access_token)
 
         if (response.ok) {
             let body = await response.json()
             let myContacts = this.processContacts(body)
-            this.setState({done: true, contacts: myContacts })
-            localStorage.setItem('contacts', JSON.stringify(myContacts))
+            this.setState({status: "done", contacts: myContacts })
+            sessionStorage.setItem('contacts', JSON.stringify(myContacts))
         }
         else {
-            console.log('Error--Error(1)')
+            sessionStorage.setItem('signIn', "FALSE");
+            this.setState({status: "error", msg: response.status + ' : ' + response.statusText})            
+            this.props.stateChange()
         }
 	}
 
 	render() {
-        if (!this.state.done) { 
-            return <Processing msg="Getting contacts."/>
-        } 
-        else { 
-            return <ContactList contacts={this.state.contacts}/>
-        }
+        switch (this.state.status) {
+            case 'processing':
+                return <Processing msg="Getting contacts."/>
+                break
+            case 'done':
+                return <ContactList contacts={this.state.contacts}/>
+                break
+            case 'error': 
+                return <ErrorPage msg={this.state.msg}/>
+                break;
+        }    
 	}
 
-    async getContacts(at="") {
-    	console.log("AUTH CODE(1) " + at)
+    async getContacts(token="") {
         let headers = new Headers()
         headers.append('Accept', 'application/json')
-        headers.append('Authorization', at)
+        headers.append('Authorization', token)
         let response = null
         try {
-            return await fetch('https://graph.microsoft.com/v1.0/me/contacts?$select=displayname,businessphones,businessaddress,emailaddresses', {
+            return await fetch(`${Config.graphUrl}/me/contacts?$select=displayname,businessphones,businessaddress,emailaddresses`, {
                 headers: headers
             })
         } catch (e) {
