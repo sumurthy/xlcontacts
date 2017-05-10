@@ -44,7 +44,10 @@ export class MyContacts extends Component {
                 break
             case 'error': 
                 return <ErrorPage msg={this.state.msg}/>
-                break;
+                break
+            default: 
+                console.log('Error: Invalid case')
+                break
         }    
     }
 

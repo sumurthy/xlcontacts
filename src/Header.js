@@ -17,7 +17,7 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
 
 	let signinStatus = false
 
-  	if (localStorage.getItem('signIn') === "TRUE") {
+  	if (sessionStorage.getItem('signIn') === "TRUE") {
        	signinStatus = true
     }	
 
@@ -53,7 +53,7 @@ export class Header extends Component {
 	       	signinStatus = true
 	    }
 
-	    console.log('-> ' + localStorage.getItem('signIn') + signinStatus)	
+	    console.log('-> ' + sessionStorage.getItem('signIn') + signinStatus)	
 
 		return (
 			<Router> 

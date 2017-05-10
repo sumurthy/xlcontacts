@@ -1,8 +1,7 @@
 import React from 'react'
-let hello = require('hellojs/dist/hello.all.js')
-//import * as Hello from 'hellojs'
+import hello from 'hellojs/dist/hello.all.js'
 import {Config} from './config'
-import ErrorPage from './ErrorPage'
+//import ErrorPage from './ErrorPage'
 
 
 class Auth extends React.Component {
@@ -13,9 +12,11 @@ class Auth extends React.Component {
         this.login = this.login.bind(this)
     }
 
-    signOut(cb) {
-        sessionStorage.setItem('signIn', "FALSE");
+    async signOut(cb) {
+        sessionStorage.setItem('signIn', "FALSE")
         this.props.stateChange()
+        await hello('msft').logout(null, {force:true})        
+        console.log('Logged out')
         this.props.history.push('/')
     }
 
@@ -23,7 +24,7 @@ class Auth extends React.Component {
         
       hello('msft').login({
         scope: Config.scopes,
-        display: 'page', // default is popup.
+        //display: 'page', // default is popup.
         response_type: 'token',  // 'code' for explicit
         force: true // (true) initiate auth flow and prompt for reauthentication where available. (null) initiate auth flow. (false) only prompt auth flow if the scopes have changed or the token expired.
       })
@@ -35,7 +36,6 @@ class Auth extends React.Component {
 
     hello.on('auth.login', async (auth) => {
       console.log("Auth passed")
-
       if (auth.network === "msft") {
         let authResponse = hello('msft').getAuthResponse()
         let response = await getUserInfo(authResponse.access_token)
@@ -45,8 +45,8 @@ class Auth extends React.Component {
             sessionStorage.setItem('userEmail', body.mail)
             console.log(sessionStorage.getItem('userEmail'))
             //setInterval(refreshAccessToken, 1000 * 60 * 1 ); // refresh access token every 10 minutes
-            sessionStorage.setItem('signIn', "TRUE")
-            this.props.stateChange()
+            await sessionStorage.setItem('signIn', "TRUE")
+            await this.props.stateChange()
         }
         else {
             sessionStorage.setItem('signIn', "FALSE") 
@@ -82,7 +82,6 @@ async function getUserInfo (token="") {
     let headers = new Headers()
     headers.append('Accept', 'application/json')
     headers.append('Authorization', token)
-    let response = null
     try {
         return await fetch(`${Config.graphUrl}/me`, {
             headers: headers
