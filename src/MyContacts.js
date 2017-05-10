@@ -16,10 +16,10 @@ export class MyContacts extends Component {
             }
     }
 
-	async componentDidMount() {
+    async componentDidMount() {
 
         let authResponse = hello('msft').getAuthResponse();
-	    let response = await this.getContacts(authResponse.access_token)
+        let response = await this.getContacts(authResponse.access_token)
 
         if (response.ok) {
             let body = await response.json()
@@ -30,11 +30,11 @@ export class MyContacts extends Component {
         else {
             sessionStorage.setItem('signIn', "FALSE");
             this.setState({status: "error", msg: response.status + ' : ' + response.statusText})            
-            this.props.stateChange()
+            this.props.appState()
         }
-	}
+    }
 
-	render() {
+    render() {
         switch (this.state.status) {
             case 'processing':
                 return <Processing msg="Getting contacts."/>
@@ -46,7 +46,7 @@ export class MyContacts extends Component {
                 return <ErrorPage msg={this.state.msg}/>
                 break;
         }    
-	}
+    }
 
     async getContacts(token="") {
         let headers = new Headers()
@@ -64,45 +64,45 @@ export class MyContacts extends Component {
     }
 
     processContacts(list={}) {
-    	//let contacts = JSON.parse(list)
-    	let contact =  []
-    	let contacts = []
-    	list.value.forEach((e) => {
-    		contact.push(e.displayName)
-    		contact.push(e.emailAddresses[0].address)
-    		contact.push(e.businessPhones[0])
-    		contact.push(e.businessAddress.city)
-    		contact.push(e.businessAddress.state)
-    		contacts.push(contact)
-    		contact = []
-    	})
-    	return contacts
+        //let contacts = JSON.parse(list)
+        let contact =  []
+        let contacts = []
+        list.value.forEach((e) => {
+            contact.push(e.displayName)
+            contact.push(e.emailAddresses[0].address)
+            contact.push(e.businessPhones[0])
+            contact.push(e.businessAddress.city)
+            contact.push(e.businessAddress.state)
+            contacts.push(contact)
+            contact = []
+        })
+        return contacts
     }
 
 }
 
 function ContactList(props) {
 
-	let rows = []
-	 props.contacts.forEach((e,i) => {
-	 	rows.push(<tr key={i}><td>{e[0]}</td><td>{e[1]}</td><td>{e[2]}</td><td>{e[3]}</td><td>{e[4]}</td><td>{e[5]}</td></tr>);
+    let rows = []
+     props.contacts.forEach((e,i) => {
+        rows.push(<tr key={i}><td>{e[0]}</td><td>{e[1]}</td><td>{e[2]}</td><td>{e[3]}</td><td>{e[4]}</td><td>{e[5]}</td></tr>);
     } ) 
-   	return <div>
-   				 <table className="table">
-   			 	    <thead>
-					      <tr>
-					        <th>Name</th>
-					        <th>Email</th>
-					        <th>Phone</th>
-					        <th>City</th>
-					        <th>State</th>
-					      </tr>
-					</thead>
-					<tbody>
-					   {rows}
-					</tbody>					      
-   				 </table>
-   		   </div>
+    return <div>
+                 <table className="table">
+                    <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>City</th>
+                            <th>State</th>
+                          </tr>
+                    </thead>
+                    <tbody>
+                       {rows}
+                    </tbody>                          
+                 </table>
+           </div>
 }
 
 export default MyContacts

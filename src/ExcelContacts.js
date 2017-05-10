@@ -18,7 +18,7 @@ export class ExcelContacts extends Component {
             let body = await response.json()
             sessionStorage.setItem('authCode', params['access_token']);
             sessionStorage.setItem('signIn', "TRUE");
-            this.props.stateChange()
+            this.props.appState()
             console.log('Saved Auth Code: ' + sessionStorage.getItem('authCode'))
             this.setState({done: true})
         }

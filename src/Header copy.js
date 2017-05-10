@@ -17,7 +17,7 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
 
 	let signinStatus = false
 
-  	if (localStorage.getItem('signIn') === "TRUE") {
+  	if (sessionStorage.getItem('signIn') === "TRUE") {
        	signinStatus = true
     }	
 
@@ -38,10 +38,6 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
 
 export class Header extends Component {
 
-	constructor(props) {
-	    super(props)
-	}
-
 	render() {
 		const divStyle = {
 			  padding: "35px",
@@ -53,7 +49,7 @@ export class Header extends Component {
 	       	signinStatus = true
 	    }
 
-	    console.log('-> ' + localStorage.getItem('signIn') + signinStatus)	
+	    console.log('-> ' + sessionStorage.getItem('signIn') + signinStatus)	
 
 		return (
 			<Router> 
@@ -75,9 +71,9 @@ export class Header extends Component {
 					<ProtectedRoute  path="/mycontacts" component={MyContacts}/>
 					<ProtectedRoute  path="/excelcontacts" component={ExcelContacts}/>
 				    <Route path="/auth" render={(props) => (
-                        <Auth {...props} stateChange={this.props.stateChange} />) }
+                        <Auth {...props} appState={this.props.appState} />) }
                 	/>
-                	<Route path="/error"  render={(props) => (
+                	<Route path="/Error"  render={(props) => (
                         <Error {...props}/>) }
                     />
 				</div>

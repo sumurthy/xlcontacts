@@ -6,25 +6,25 @@ import {Config} from './config'
 
 class App extends Component {
 
-  constructor(props) {
-      super(props)
-      this.state = {
-        stateChange: false
-      }
-      this.updateState = this.updateState.bind(this)
-  }
+	constructor(props) {
+	    super(props)
+	    this.state = {
+	      appState: false
+	    }
+   		this.updateState = this.updateState.bind(this)
+	}
 
     async componentDidMount() {
       hello.init({
         msft: {
-          oauth: {
-            version: 2,
-            auth: Config.authUrl
-          },
+	        oauth: {
+	          version: 2,
+	          auth: Config.authUrl
+	        },
           scope_delim: ' ',
           form: false
         }
-      })      
+    	})      
 
       hello.init({
         msft: Config.clientId
@@ -34,17 +34,17 @@ class App extends Component {
       })
     }
 
-  updateState() {
-    this.setState({stateChange: !this.state.stateChange})
-  }
+	updateState() {
+	  this.setState({appState: !this.state.appState})
+	}
 
-  render() {
-    return (
-      <div>
-        <Header stateChange={this.updateState}/>
-      </div>
-    )
-  }
+	render() {
+		return (
+			<div>
+				<Header appState={this.updateState}/>
+			</div>
+		)
+	}
 } 
 
 export default App;

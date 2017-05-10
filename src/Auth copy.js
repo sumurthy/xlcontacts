@@ -1,33 +1,33 @@
 import React from 'react'
-let hello = require('hellojs/dist/hello.all.js')
-//import * as Hello from 'hellojs'
-import {Config} from './config'
+//let hello = require('hellojs/dist/hello.all.js')
+import hello from 'hellojs/dist/hello.all.js'
 import ErrorPage from './ErrorPage'
+import {Config} from './config'
 
 
 class Auth extends React.Component {
 
-    constructor(props) {
-        super(props);
-        this.signOut = this.signOut.bind(this)
-        this.login = this.login.bind(this)
-    }
+  constructor(props) {
+    super(props) 
+    this.signOut = this.signOut.bind(this)
+    this.login = this.login.bind(this)
+  }
 
-    signOut(cb) {
-        sessionStorage.setItem('signIn', "FALSE");
-        this.props.stateChange()
-        this.props.history.push('/')
-    }
+  signOut(cb) {
+    console.log('LOGOUT!')
+    sessionStorage.setItem('signIn', "FALSE") 
+    this.props.appState()
+    this.props.history.push('/')
+  }
 
-    login() {
-        
+  login() {
       hello('msft').login({
         scope: Config.scopes,
         display: 'page', // default is popup.
         response_type: 'token',  // 'code' for explicit
         force: true // (true) initiate auth flow and prompt for reauthentication where available. (null) initiate auth flow. (false) only prompt auth flow if the scopes have changed or the token expired.
       })
-    }
+  }
 
   async componentDidMount() {
 
@@ -46,12 +46,12 @@ class Auth extends React.Component {
             console.log(sessionStorage.getItem('userEmail'))
             //setInterval(refreshAccessToken, 1000 * 60 * 1 ); // refresh access token every 10 minutes
             sessionStorage.setItem('signIn', "TRUE")
-            this.props.stateChange()
+            this.props.appState()
         }
         else {
             sessionStorage.setItem('signIn', "FALSE") 
             this.setState({status: "error", msg: response.status + ' : ' + response.statusText})            
-            this.props.stateChange()            
+            this.props.appState()            
         }
       }
       else {
@@ -59,21 +59,30 @@ class Auth extends React.Component {
     })
   }
 
-    render () {
-        if (sessionStorage.getItem('signIn') === "TRUE") {
-            return <div> <p className="lead"> Logout of your session: </p>      
-                        <button className="btn btn-default" onClick={this.signOut}
-                        >Logout </button>
-                    </div>
-        }
-        else {
-            return <div><div className="control-group">
-                            <p className="lead"> Login to continue: </p>    
-                            <button className="btn btn-default" onClick={this.login}>Login</button>
-                         </div>
-                    </div> 
-        }
+  render () {
+    console.log("Auth render loaded")
+
+    if (sessionStorage.getItem('signIn') === "TRUE") {
+    console.log("Auth render22")
+
+      return (
+        <div> 
+          <p className="lead"> You are logged in. Select an opion to continue or logout. </p>      
+          <button className="btn btn-default" onClick={this.signOut}>Logout </button>
+        </div>
+      )
     }
+    else {
+      return (
+        <div>
+          <div className="control-group">
+            <p className="lead"> Login to continue: </p>    
+            <button className="btn btn-default" onClick={this.login}>Login</button>
+          </div>
+        </div>
+      ) 
+    }
+  }
 
 }
 
@@ -120,4 +129,4 @@ async function getUserInfo (token="") {
     
 // }
 
-export default Auth;
+export default Auth 
