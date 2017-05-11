@@ -3,6 +3,7 @@ import Processing from './Processing'
 import ErrorPage from './ErrorPage'
 import hello from 'hellojs/dist/hello.all.js'
 import {Config} from './config'
+import Graph from './Graph'
 
 
 export class MyContacts extends Component {
@@ -19,11 +20,13 @@ export class MyContacts extends Component {
     async componentDidMount() {
 
         let authResponse = hello('msft').getAuthResponse();
-        let response = await this.getContacts(authResponse.access_token)
+        let response = await Graph.getContacts(authResponse.access_token)
 
         if (response.ok) {
             let body = await response.json()
-            let myContacts = this.processContacts(body)
+            let myContacts = Graph.processContacts(body)
+            console.log(myContacts)
+            
             this.setState({status: "done", contacts: myContacts })
             sessionStorage.setItem('contacts', JSON.stringify(myContacts))
         }
@@ -51,42 +54,43 @@ export class MyContacts extends Component {
         }    
     }
 
-    async getContacts(token="") {
-        let headers = new Headers()
-        headers.append('Accept', 'application/json')
-        headers.append('Authorization', token)
-        let response = null
-        try {
-            return await fetch(`${Config.graphUrl}/me/contacts?$select=displayname,businessphones,businessaddress,emailaddresses`, {
-                headers: headers
-            })
-        } catch (e) {
-            console.log("Error");
-        } finally {
-        }
-    }
+    // async getContacts(token="") {
+    //     let headers = new Headers()
+    //     headers.append('Accept', 'application/json')
+    //     headers.append('Authorization', token)
+    //     let response = null
+    //     try {
+    //         return await fetch(`${Config.graphUrl}/me/contacts?$select=displayname,businessphones,businessaddress,emailaddresses`, {
+    //             headers: headers
+    //         })
+    //     } catch (e) {
+    //         console.log("Error");
+    //     } finally {
+    //     }
+    // }
 
-    processContacts(list={}) {
-        //let contacts = JSON.parse(list)
-        let contact =  []
-        let contacts = []
-        list.value.forEach((e) => {
-            contact.push(e.displayName)
-            contact.push(e.emailAddresses[0].address)
-            contact.push(e.businessPhones[0])
-            contact.push(e.businessAddress.city)
-            contact.push(e.businessAddress.state)
-            contacts.push(contact)
-            contact = []
-        })
-        return contacts
-    }
+    // processContacts(list={}) {
+    //     //let contacts = JSON.parse(list)
+    //     let contact =  []
+    //     let contacts = []
+    //     list.value.forEach((e) => {
+    //         contact.push(e.displayName)
+    //         contact.push(e.emailAddresses[0].address)
+    //         contact.push(e.businessPhones[0])
+    //         contact.push(e.businessAddress.city)
+    //         contact.push(e.businessAddress.state)
+    //         contacts.push(contact)
+    //         contact = []
+    //     })
+    //     return contacts
+    // }
 
 }
 
 function ContactList(props) {
 
     let rows = []
+    console.log("Render contact list")
      props.contacts.forEach((e,i) => {
         rows.push(<tr key={i}><td>{e[0]}</td><td>{e[1]}</td><td>{e[2]}</td><td>{e[3]}</td><td>{e[4]}</td><td>{e[5]}</td></tr>);
     } ) 

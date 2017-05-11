@@ -30,8 +30,7 @@ class Auth extends React.Component {
       })
     }
 
-  async componentDidMount() {
-
+  componentDidMount() {
     console.log("Auth component loaded")
 
     hello.on('auth.login', async (auth) => {
