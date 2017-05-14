@@ -53,12 +53,10 @@ export class Header extends Component {
 	       	signinStatus = true
 	    }
 
-	    console.log('-> ' + sessionStorage.getItem('signIn') + signinStatus)	
-
 		return (
 			<Router> 
 			<div>
-				<nav className="navbar navbar-default navbar-fixed-top">
+				<nav className="navbar navbar-inverse bg-primary navbar-fixed-top">
 					<div className="container-fluid">
 						<div className="navbar-header">
 							<h8 className="navbar-brand"><i>Excel Contacts Demo</i></h8>

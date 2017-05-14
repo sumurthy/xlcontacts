@@ -16,7 +16,6 @@ class Auth extends React.Component {
         sessionStorage.setItem('signIn', "FALSE")
         this.props.stateChange()
         await hello('msft').logout(null, {force:true})        
-        console.log('Logged out')
         this.props.history.push('/')
     }
 
@@ -31,10 +30,8 @@ class Auth extends React.Component {
     }
 
   componentDidMount() {
-    console.log("Auth component loaded")
 
     hello.on('auth.login', async (auth) => {
-      console.log("Auth passed")
       if (auth.network === "msft") {
         let authResponse = hello('msft').getAuthResponse()
         let response = await getUserInfo(authResponse.access_token)
@@ -42,7 +39,6 @@ class Auth extends React.Component {
         if (response.ok) {
             let body =  await response.json()
             sessionStorage.setItem('userEmail', body.mail)
-            console.log(sessionStorage.getItem('userEmail'))
             //setInterval(refreshAccessToken, 1000 * 60 * 1 ); // refresh access token every 10 minutes
             await sessionStorage.setItem('signIn', "TRUE")
             await this.props.stateChange()
@@ -60,9 +56,9 @@ class Auth extends React.Component {
 
     render () {
         if (sessionStorage.getItem('signIn') === "TRUE") {
-            return <div> <p className="lead"> Logout of your session: </p>      
-                        <button className="btn btn-default" onClick={this.signOut}
-                        >Logout </button>
+            return <div> <p className="lead"> You are currently logged-in. Select an option to continue. </p><p className="lead"> Click here to logout of your session:        
+                        <br/> <button className="btn btn-default" onClick={this.signOut}
+                        >Logout </button></p> 
                     </div>
         }
         else {
@@ -77,7 +73,6 @@ class Auth extends React.Component {
 }
 
 async function getUserInfo (token="") {
-    console.log("Getting user information: " + token)
     let headers = new Headers()
     headers.append('Accept', 'application/json')
     headers.append('Authorization', token)
@@ -86,11 +81,14 @@ async function getUserInfo (token="") {
             headers: headers
         })
     } catch (e) {
-        console.log("Error");
+        console.log("Error loading user information.");
     } finally {
     }
 }
 
+/*
+    TODO: Provide background function to refresh token.
+*/
 // async function refreshAccessToken() {
 //     if (!sessionStorage.getItem('signIn') === 'TRUE') {
 //         console.log("Not refreshing access token")

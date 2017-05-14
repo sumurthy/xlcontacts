@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import Processing from './Processing'
 import ErrorPage from './ErrorPage'
 import hello from 'hellojs/dist/hello.all.js'
@@ -9,7 +9,7 @@ import Graph from './Graph'
 export class MyContacts extends Component {
 
     constructor(props) {
-        super(props);
+        super(props)
         this.state = {
             status: "processing",
             contacts: [],
@@ -19,21 +19,14 @@ export class MyContacts extends Component {
 
     async componentDidMount() {
 
-        let authResponse = hello('msft').getAuthResponse();
-        let response = await Graph.getContacts(authResponse.access_token)
-
-        if (response.ok) {
-            let body = await response.json()
-            let myContacts = Graph.processContacts(body)
-            console.log(myContacts)
-            
-            this.setState({status: "done", contacts: myContacts })
-            sessionStorage.setItem('contacts', JSON.stringify(myContacts))
-        }
-        else {
-            sessionStorage.setItem('signIn', "FALSE");
-            this.setState({status: "error", msg: response.status + ' : ' + response.statusText})            
-            this.props.appState()
+        let authResponse = hello('msft').getAuthResponse()
+        try {
+          let myContacts = await Graph.getContacts(authResponse.access_token)
+          this.setState({status: "done", contacts: myContacts })
+        } catch (e) {
+          sessionStorage.setItem('signIn', "FALSE")
+          this.setState({status: "error", msg: e})            
+          this.props.appState()
         }
     }
 
@@ -49,50 +42,17 @@ export class MyContacts extends Component {
                 return <ErrorPage msg={this.state.msg}/>
                 break
             default: 
-                console.log('Error: Invalid case')
+                console.log('Error: Invalid case defined in the render method.')
                 break
         }    
     }
-
-    // async getContacts(token="") {
-    //     let headers = new Headers()
-    //     headers.append('Accept', 'application/json')
-    //     headers.append('Authorization', token)
-    //     let response = null
-    //     try {
-    //         return await fetch(`${Config.graphUrl}/me/contacts?$select=displayname,businessphones,businessaddress,emailaddresses`, {
-    //             headers: headers
-    //         })
-    //     } catch (e) {
-    //         console.log("Error");
-    //     } finally {
-    //     }
-    // }
-
-    // processContacts(list={}) {
-    //     //let contacts = JSON.parse(list)
-    //     let contact =  []
-    //     let contacts = []
-    //     list.value.forEach((e) => {
-    //         contact.push(e.displayName)
-    //         contact.push(e.emailAddresses[0].address)
-    //         contact.push(e.businessPhones[0])
-    //         contact.push(e.businessAddress.city)
-    //         contact.push(e.businessAddress.state)
-    //         contacts.push(contact)
-    //         contact = []
-    //     })
-    //     return contacts
-    // }
-
 }
 
 function ContactList(props) {
 
     let rows = []
-    console.log("Render contact list")
-     props.contacts.forEach((e,i) => {
-        rows.push(<tr key={i}><td>{e[0]}</td><td>{e[1]}</td><td>{e[2]}</td><td>{e[3]}</td><td>{e[4]}</td><td>{e[5]}</td></tr>);
+    props.contacts.forEach((e,i) => {
+        rows.push(<tr key={i}><td>{e[0]}</td><td>{e[1]}</td><td>{e[2]}</td><td>{e[3]}</td><td>{e[4]}</td><td>{e[5]}</td></tr>)
     } ) 
     return <div>
                  <table className="table">
