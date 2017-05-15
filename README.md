@@ -30,8 +30,8 @@ All of the Microsoft Graph API calls are grouped in `Graph.js` helper functions.
 
 Specifically, for Excel export's functionality, the application does the following: 
 
-1. Checks if the file mentioned above already exists, if not it creates an empty Excel file using empty Excel file's base-64 representation.  
-2. It creates a new worksheet and then a new table on the newly created worksheet. It then adds new rows by providing the contact's array as an input. 
+1. Check if the file mentioned above already exists, if not create an empty Excel file using empty Excel file's base-64 representation.  
+2. Create a persistent Excel session Id and use it on all subsequent API calls (in `workbook-sesssion-id` HTTP header). Create a new worksheet and then a new table on the newly created worksheet. Add new rows by providing the contact's array as an input. 
 
 ## Contribution 
 

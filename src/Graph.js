@@ -94,34 +94,66 @@ var self = module.exports = {
       headers.append('Accept', 'application/json')
       headers.append('Authorization', token)
       let body = {} //New worksheet with default name
-      let response
-
+      let response = null
       try {
+        // Step-1: Create an Excel persistent session 
+        body = {
+          persistChanges: true 
+        }        
+        response = await fetch(`${Config.excelFilePath}/workbook/createSession`, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(body)
+        })
+        if (!response.ok) { throw new Error('Create session failed. ') }
+
+        let session = await response.json()
+        // Load the session id as part of the headers. 
+        headers.append('Workbook-Session-Id', session.id)
+
+        // Step-2: Create a new worksheet
         response = await fetch(`${Config.excelFilePath}/workbook/worksheets`, {
         method: 'POST',
         headers: headers,
         body: JSON.stringify(body)
         })
+
+        if (!response.ok) { throw new Error('Create workseet failed. ') }
+
         let ws = await response.json()
+        
+        // Step-3: Create a new table
+
         body = {
           address: `${ws.name}!A1:E1`, 
           hasHeaders: true
         }
+
         response = await fetch(`${Config.excelFilePath}/workbook/worksheets/${ws.name}/tables/add`, {
         method: 'POST',
         headers: headers,
         body: JSON.stringify(body)
         })
+
+        if (!response.ok) { throw new Error('Create table failed. ') }
+
         let table = await response.json()
+
+        // Step-4: Add rows at the end of the table.
+
         body = {
           index: -1,
           values: contacts
         }
+
         response = await fetch(`${Config.excelFilePath}/workbook/worksheets/${ws.name}/tables/${table.name}/rows`, {
         method: 'POST',
         headers: headers,
         body: JSON.stringify(body)
         })
+
+        if (!response.ok) { throw new Error('Add rows to Excel table failed. ') }
+
 
       } catch (e) {
         throw new Error("Error in creating Excel worksheet: " + e)
