@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import Processing from './Processing'
 import ErrorPage from './ErrorPage'
 import hello from 'hellojs/dist/hello.all.js'
-import {Config} from './config'
 import Graph from './Graph'
 
 
@@ -34,13 +33,10 @@ export class MyContacts extends Component {
         switch (this.state.status) {
             case 'processing':
                 return <Processing msg="Getting contacts."/>
-                break
             case 'done':
                 return <ContactList contacts={this.state.contacts}/>
-                break
             case 'error': 
                 return <ErrorPage msg={this.state.msg}/>
-                break
             default: 
                 console.log('Error: Invalid case defined in the render method.')
                 break

@@ -12,6 +12,7 @@ import MyContacts from './MyContacts'
 import ExcelContacts from './ExcelContacts'
 import Auth from './Auth'
 import Home from './Home'
+import Error from './ErrorPage'
 
 const ProtectedRoute = ({ component: Component, ...rest }) => { 
 
@@ -37,11 +38,6 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
 }
 
 export class Header extends Component {
-
-	constructor(props) {
-	    super(props)
-	}
-
 	render() {
 		const divStyle = {
 			  padding: "35px",
