@@ -33,8 +33,6 @@ Specifically, for Excel export's functionality, the application does the followi
 1. Check if the file mentioned above already exists, if not create an empty Excel file using empty Excel file's base-64 representation.  
 2. Create a persistent Excel session Id and use it on all subsequent API calls (in `workbook-sesssion-id` HTTP header). Create a new worksheet and then a new table on the newly created worksheet. Add new rows by providing the contact's array as an input. 
 
-Checkout `src/Graph.js` file for more details. 
-
 ## Contribution 
 
 If you wish to see any feature or have questions, please open a Github issue on this repository. If you wish to contribute to add a new feature or fix an issue, please begin by opening an issue by stating the intended change. 
