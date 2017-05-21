@@ -1,26 +1,30 @@
 import React from 'react'
 import hello from 'hellojs/dist/hello.all.js'
 import {Config} from './config'
+import Graph from './Graph'
+
 //import ErrorPage from './ErrorPage'
 
 
 class Auth extends React.Component {
 
     constructor(props) {
-        super(props);
-        this.signOut = this.signOut.bind(this)
-        this.login = this.login.bind(this)
+      super(props);
+      this.logout = this.logout.bind(this)
+      this.login = this.login.bind(this)
     }
 
-    async signOut(cb) {
-        sessionStorage.setItem('signIn', "FALSE")
-        this.props.stateChange()
-        await hello('msft').logout(null, {force:true})        
-        this.props.history.push('/')
+    async logout(cb) {
+      sessionStorage.setItem('signIn', "FALSE")
+      this.props.stateChange()
+      let authResponse = hello('msft').getAuthResponse()
+      await Graph.closeSession(authResponse.access_token) 
+      sessionStorage.setItem('workbookSessionId', '')          
+      await hello('msft').logout(null, {force:true})   
+      this.props.history.push('/')
     }
 
     login() {
-        
       hello('msft').login({
         scope: Config.scopes,
         //display: 'page', // default is popup.
@@ -30,24 +34,25 @@ class Auth extends React.Component {
     }
 
   componentDidMount() {
-
     hello.on('auth.login', async (auth) => {
       if (auth.network === "msft") {
         let authResponse = hello('msft').getAuthResponse()
-        let response = await getUserInfo(authResponse.access_token)
-
-        if (response.ok) {
+        try{
+          let response = await Graph.getUserInfo(authResponse.access_token)
+          if (response.ok) {
             let body =  await response.json()
-            //sessionStorage.setItem('userEmail', body.mail)
-            // refresh access token every 10 minutes
-            //setInterval(refreshAccessToken, 1000 * 60 * 10 ); 
+            sessionStorage.setItem('userEmail', body.mail)
+            //setInterval(refreshAccessToken, 1000 * 60 * 1 ); // refresh access token every 10 minutes
             await sessionStorage.setItem('signIn', "TRUE")
             await this.props.stateChange()
-        }
-        else {
+          }
+          else {
             sessionStorage.setItem('signIn', "FALSE") 
             this.setState({status: "error", msg: response.status + ' : ' + response.statusText})            
             this.props.stateChange()            
+          }
+        } catch (e) {
+          throw new Error('Login error')
         }
       }
       else {
@@ -56,36 +61,23 @@ class Auth extends React.Component {
   }
 
     render () {
-        if (sessionStorage.getItem('signIn') === "TRUE") {
-            return <div> <p className="lead"> You are currently logged-in. Select an option to continue. </p><p className="lead"> Click here to logout of your session:        
-                        <br/> <button className="btn btn-default" onClick={this.signOut}
-                        >Logout </button></p> 
-                    </div>
-        }
-        else {
-            return <div><div className="control-group">
-                            <p className="lead"> Login to continue: </p>    
-                            <button className="btn btn-default" onClick={this.login}>Login</button>
-                         </div>
-                    </div> 
-        }
+      if (sessionStorage.getItem('signIn') === "TRUE") {
+          return <div> <p className="lead"> You are currently logged-in. Select an option to continue. </p><p className="lead"> Click here to logout of your session:        
+                    <br/> <button className="btn btn-default" onClick={this.logout}
+                    >Logout </button></p> 
+                  </div>
+      }
+      else {
+          return <div><div className="control-group">
+                        <p className="lead"> Login to continue: </p>    
+                        <button className="btn btn-default" onClick={this.login}>Login</button>
+                       </div>
+                  </div> 
+      }
     }
 
 }
 
-async function getUserInfo (token="") {
-    let headers = new Headers()
-    headers.append('Accept', 'application/json')
-    headers.append('Authorization', token)
-    try {
-        return await fetch(`${Config.graphUrl}/me`, {
-            headers: headers
-        })
-    } catch (e) {
-        console.log("Error loading user information.");
-    } finally {
-    }
-}
 
 /*
     TODO: Provide background function to refresh token.
