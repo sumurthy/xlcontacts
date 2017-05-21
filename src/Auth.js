@@ -41,9 +41,8 @@ class Auth extends React.Component {
           let response = await Graph.getUserInfo(authResponse.access_token)
           if (response.ok) {
             let body =  await response.json()
-            //sessionStorage.setItem('userEmail', body.mail)
-            // refresh access token every 10 minutes
-            //setInterval(refreshAccessToken, 1000 * 60 * 10 ); 
+            sessionStorage.setItem('userEmail', body.mail)
+            //setInterval(refreshAccessToken, 1000 * 60 * 1 ); // refresh access token every 10 minutes
             await sessionStorage.setItem('signIn', "TRUE")
             await this.props.stateChange()
           }
