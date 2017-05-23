@@ -168,7 +168,10 @@ export default class Graph {
         throw new Error("Error in creating Excel worksheet: " + e)
       }
     }
-
+    
+    /*
+    * Close the Excel session as part of the logout actions. It helps release the workbook for other user actions such as opening with the Excel client.  
+    */
     static async closeSession(token='') {
       let headers = new Headers()
       headers.append('Accept', 'application/json')
