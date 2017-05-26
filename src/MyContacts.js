@@ -53,13 +53,13 @@ function ContactList(props) {
     return <div>
                  <table className="table">
                     <thead>
-                          <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>City</th>
-                            <th>State</th>
-                          </tr>
+                      <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>City</th>
+                        <th>State</th>
+                      </tr>
                     </thead>
                     <tbody>
                        {rows}
