@@ -36,10 +36,10 @@ export default class Graph {
           if (e.phones[0]) {
             contact.push(e.phones[0].number)
           } else {contact.push('undefined')}
-          if (e.postalAddresses) {
+          if (e.postalAddresses[0]) {
             contact.push(e.postalAddresses.city)
           } else {contact.push('undefined')}
-          if (e.postalAddresses) {
+          if (e.postalAddresses[0]) {
             contact.push(e.postalAddresses.state)
           } else {contact.push('undefined')}
 
