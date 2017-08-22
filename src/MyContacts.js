@@ -23,9 +23,7 @@ export class MyContacts extends Component {
           let myContacts = await Graph.getContacts(authResponse.access_token)
           this.setState({status: "done", contacts: myContacts })
         } catch (e) {
-          sessionStorage.setItem('signIn', "FALSE")
-          this.setState({status: "error", msg: e})            
-          this.props.appState()
+          this.setState({status: 'error', msg:'Error reading contacts: ' + e})            
         }
     }
 

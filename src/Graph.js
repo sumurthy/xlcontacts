@@ -8,7 +8,7 @@ export default class Graph {
       headers.append('Authorization', token)
       let response
       try {
-        let url = `${Config.graphUrl}/me/contacts?$select=displayname,businessphones,businessaddress,emailaddresses`
+        let url = `${Config.graphUrl}/me/contacts?$select=displayname,phones,postalAddresses,emailaddresses`
         let options = {
           headers: headers
         }
@@ -23,14 +23,26 @@ export default class Graph {
 
     static processContacts (list={})  {
       //let contacts = JSON.parse(list)
+        // console.log(list)
       let contact =  []
       let contacts = []
       list.value.forEach((e) => {
-          contact.push(e.displayName)
-          contact.push(e.emailAddresses[0].address)
-          contact.push(e.businessPhones[0])
-          contact.push(e.businessAddress.city)
-          contact.push(e.businessAddress.state)
+          if (e.displayName) {
+            contact.push(e.displayName)
+          } else {contact.push('undefined')}
+          if (e.emailAddresses[0]) {
+            contact.push(e.emailAddresses[0].address)
+          } else {contact.push('undefined')}
+          if (e.phones[0]) {
+            contact.push(e.phones[0].number)
+          } else {contact.push('undefined')}
+          if (e.postalAddresses) {
+            contact.push(e.postalAddresses.city)
+          } else {contact.push('undefined')}
+          if (e.postalAddresses) {
+            contact.push(e.postalAddresses.state)
+          } else {contact.push('undefined')}
+
           contacts.push(contact)
           contact = []
       })
